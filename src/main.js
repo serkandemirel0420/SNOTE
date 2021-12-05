@@ -9,10 +9,7 @@ let wm = new window.WindowManager()
 wm.setFocus()
 
 globalShortcut.register('CommandOrControl+K', () => {
-
-   //alert('CommandOrControl+Alt+K')
     wm.setFocus()
-
 })
 
  
