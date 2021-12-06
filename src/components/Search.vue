@@ -8,6 +8,8 @@ defineProps({
 let items = ["foo", "bar", "baz"]
 
 const count = ref(0)
+
+
 </script>
 
 

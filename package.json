@@ -1,5 +1,5 @@
 {
-  "name": "SNOTE",
+  "name": "snote",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
@@ -9,9 +9,12 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^1.0.0-beta.8",
+    "tauri-plugin-sql": "github:tauri-apps/tauri-plugin-sql#488558717b77d8a2bcb37acfd2eca9658aeadc8e",
+    "tauri-plugin-sql-api": "github:tauri-apps/tauri-plugin-sql#v0.1.0",
     "vue": "^3.2.16"
   },
   "devDependencies": {
+    "@originjs/vite-plugin-commonjs": "^1.0.1",
     "@tauri-apps/cli": "^1.0.0-beta.10",
     "@vitejs/plugin-vue": "^1.9.3",
     "vite": "^2.6.4"

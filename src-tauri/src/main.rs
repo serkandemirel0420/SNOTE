@@ -4,6 +4,7 @@
 )]
 
 use tauri::{CustomMenuItem, Menu, Submenu};
+use tauri_plugin_sql::TauriSql;
 
 fn main() {
   // here `"quit".to_string()` defines the menu item id, and the second parameter is the menu item label.
@@ -15,6 +16,7 @@ fn main() {
   let menu = Menu::new().add_submenu(submenu);
 
   tauri::Builder::default()
+    .plugin(TauriSql::default())
     .menu(menu)
     .on_menu_event(|event| {
       match event.menu_item_id() {
