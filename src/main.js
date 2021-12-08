@@ -7,25 +7,6 @@ import App from './App.vue'
 import Database from 'tauri-plugin-sql-api'
 
 
-
-(async function(){
-    
-     const db = await Database.load('/Users/serkandemirel/snote.db')
-  
-     try {
-        let result = await db.execute(`CREATE TABLE "serkan" ("id" INTEGER, "content"	TEXT );`);
-        alert(result)
-     }catch(e){
-         alert(e)
-     }
-     
-     
-    
-
-})();
-
-
-
 console.log("db created")
  
 
@@ -36,9 +17,6 @@ wm.setFocus()
 globalShortcut.register('CommandOrControl+K', () => {
     wm.setFocus()
 })
-
- 
-
 
 
 createApp(App).mount('#app')

@@ -1,47 +1,51 @@
 <script setup>
 import { ref } from 'vue'
+import Database from 'tauri-plugin-sql-api'
+ let db;
 
-defineProps({
-  msg: String
-})
+(async function(){
+     try {
+      db = await Database.load('/Users/serkandemirel/snote.db')
+     }catch(e){
+        console.log(e)
+     }
+})();
 
-let items = ["foo", "bar", "baz"]
+let result = ref(null);
 
-const count = ref(0)
 
+async function searchClick(){
+  //calculate the time spend on execution
+
+
+  let rslt = await db.select(`SELECT * from content;`);
+  result.value = rslt; 
+  
+}
 
 </script>
 
 
 
-
-
-
-
-
 <template>
 
+  <div id="searchComp">
+    {{msg}}
+    <div class="searchBar">
+      <input id="searchTxt" type="text" v-model="search" @keyup.enter="search" />
+      <button id="searchBtn" @click="searchClick">Search</button>
+    </div>
+    
+    <ul class="items">
+      <li v-for='item in result'>
+        {{ item.content }}
+      </li>
+    </ul>
 
-<div id="searchComp">
+     
 
-
-  <!-- <h1>{{ msg }}</h1> -->
- <!-- <button type="button" @click="count++">Count is  : {{ count }}</button> -->
-
-
-  <div class="searchBar">
-    <input id="searchTxt" type="text" v-model="search" @keyup.enter="search" />
-    <button id="searchBtn" @click="search">Search</button>
+  
   </div>
-   
-  <ul class="items">
-    <li v-for="item in items">
-      {{ item }}
-    </li>
-  </ul>
-
- 
-</div>
 </template>
 
 
