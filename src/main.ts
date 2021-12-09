@@ -7,11 +7,10 @@ import App from './App.vue'
 import Database from 'tauri-plugin-sql-api'
 
 
-console.log("db created")
- 
 
 
-let wm = new window.WindowManager()
+
+let wm = new window.WindowManager("test")
 wm.setFocus()
 
 globalShortcut.register('CommandOrControl+K', () => {

@@ -1,7 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import Database from 'tauri-plugin-sql-api'
- let db;
+
+let db = null;
 
 (async function(){
      try {
@@ -11,17 +12,23 @@ import Database from 'tauri-plugin-sql-api'
      }
 })();
 
+interface Result {
+    id: number,
+    content: string,
+    parent: number,
+    status: number
+}
+
 let result = ref(null);
 
+ 
 
 async function searchClick(){
-  //calculate the time spend on execution
-
-
-  let rslt = await db.select(`SELECT * from content;`);
+  // create ts interface of result contains content, id, parent and status
+  let rslt:Result = await db.select(`SELECT * from content;`);
   result.value = rslt; 
-  
-}
+};
+
 
 </script>
 
@@ -41,9 +48,6 @@ async function searchClick(){
         {{ item.content }}
       </li>
     </ul>
-
-     
-
   
   </div>
 </template>
