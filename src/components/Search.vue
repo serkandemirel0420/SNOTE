@@ -1,81 +1,79 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Database from 'tauri-plugin-sql-api'
+import { ref } from "vue";
+import Database from "tauri-plugin-sql-api";
 
 let db = null;
-
-(async function(){
-     try {
-      db = await Database.load('/Users/serkandemirel/snote.db')
-     }catch(e){
-        console.log(e)
-     }
-})();
-
-interface Result {
-    id: number,
-    content: string,
-    parent: number,
-    status: number
-}
-
 let result = ref(null);
 
- 
+try {
+  (async () => {
+    db = await Database.load("/Users/serkandemirel/snote.db");
+    let rslt = await db.select(`SELECT * from content;`);
+    result.value = rslt;
+  })();
+} catch (e) {
+  console.log("Error happened when connecting to DB", e);
+}
 
-async function searchClick(){
-  // create ts interface of result contains content, id, parent and status
-  let rslt:Result = await db.select(`SELECT * from content;`);
-  result.value = rslt; 
-};
+async function searchClick() {
+  let rslt = await db.select(`SELECT * from content;`);
+  result.value = rslt;
+}
 
+let indent = ref(5);
 
+function sizeClick($event) {
+  $event.target.style.paddingLeft = indent.value++ + "px";
+}
+
+let contentIcon = "99";
 </script>
 
-
-
 <template>
-
   <div id="searchComp">
-    {{msg}}
+    {{ msg }}
     <div class="searchBar">
       <input id="searchTxt" type="text" v-model="search" @keyup.enter="search" />
       <button id="searchBtn" @click="searchClick">Search</button>
     </div>
-    
-    <ul class="items">
-      <li v-for='item in result'>
+
+    <div class="items">
+      <div
+        v-for="item in result"
+        :key="item.id"
+        @click="sizeClick"
+        class="item item_style"
+      >
         {{ item.content }}
-      </li>
-    </ul>
-  
+      </div>
+    </div>
   </div>
 </template>
 
-
-
-
-
-
-
 <style scoped>
+.item_style {
+  color: red;
+  content: var(--contentIcon);
+}
 
-#searchComp{
+#searchComp {
   border: 1px solid #ccc;
   margin: 20px;
 }
 
-.searchBar{
+.searchBar {
   display: flex;
+  height: 50px;
 }
 
 #searchTxt {
   flex: 10;
-  height: 30px;
+  height: 100%;
   border: 1px solid #ccc;
-  border-radius: 5px;
+
   padding: 9px;
-  font-size: 22px;
+  font-size: 19px;
+  height: 100%;
 }
 #searchBtn {
   flex: 1;
@@ -85,22 +83,16 @@ async function searchClick(){
   padding: 12px;
   font-size: 22px;
   cursor: pointer;
-   
-  }
-
-ul.items {
-    list-style: none;
-    padding: 10px;
 }
 
-ul.items li {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
+.item {
+  text-align: left;
+  padding: 10px 7px;
+  border: 1px solid lightgray;
+  font-size: large;
 }
 
-
-
+.margin-first {
+  margin-left: 20 px;
+}
 </style>
