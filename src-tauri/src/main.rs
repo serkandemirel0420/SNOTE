@@ -9,34 +9,27 @@ use tauri_plugin_sql::TauriSql;
 fn main() {
   
   let menu = Menu::new()
-  .add_submenu(Submenu::new(
-    "AppName",
-    Menu::new()
-      .add_native_item(MenuItem::Services)
-      .add_native_item(MenuItem::Separator)
-      .add_native_item(MenuItem::Hide)
-      .add_native_item(MenuItem::HideOthers)
-      .add_native_item(MenuItem::ShowAll)
-      .add_native_item(MenuItem::Separator)
-      .add_native_item(MenuItem::Quit),
-  ))
-  .add_submenu(Submenu::new(
-    "Edit",
-    Menu::new()
-      .add_native_item(MenuItem::Cut)
-      .add_native_item(MenuItem::Copy)
-      .add_native_item(MenuItem::Paste)
-      .add_native_item(MenuItem::Separator)
-      .add_native_item(MenuItem::SelectAll)
-      .add_native_item(MenuItem::Undo)
-  ))
-  .add_submenu(Submenu::new(
-    "Window",
-    Menu::new()
-      .add_native_item(MenuItem::EnterFullScreen)
-      .add_native_item(MenuItem::ShowAll)
-  ));
-
+    .add_submenu(Submenu::new(
+      "AppName",
+      Menu::new()
+        .add_native_item(MenuItem::Services)
+        .add_native_item(MenuItem::Separator)
+        .add_native_item(MenuItem::Hide)
+        .add_native_item(MenuItem::HideOthers)
+        .add_native_item(MenuItem::ShowAll)
+        .add_native_item(MenuItem::Separator)
+        .add_native_item(MenuItem::Quit),
+    ))
+    .add_submenu(Submenu::new(
+      "Menu",
+      Menu::new()
+        .add_native_item(MenuItem::Cut)
+        .add_native_item(MenuItem::Copy)
+        .add_native_item(MenuItem::Paste)
+        .add_native_item(MenuItem::Separator)
+        .add_native_item(MenuItem::SelectAll)
+    ));
+    
   
 
   tauri::Builder::default()
