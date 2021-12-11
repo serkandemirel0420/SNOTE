@@ -3,32 +3,45 @@
   windows_subsystem = "windows"
 )]
 
-use tauri::{CustomMenuItem, Menu, Submenu};
+use tauri::{CustomMenuItem, Menu, Submenu, MenuItem};
 use tauri_plugin_sql::TauriSql;
 
 fn main() {
-  // here `"quit".to_string()` defines the menu item id, and the second parameter is the menu item label.
-  let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-  let close = CustomMenuItem::new("close".to_string(), "Close");
+  
+  let menu = Menu::new()
+  .add_submenu(Submenu::new(
+    "AppName",
+    Menu::new()
+      .add_native_item(MenuItem::Services)
+      .add_native_item(MenuItem::Separator)
+      .add_native_item(MenuItem::Hide)
+      .add_native_item(MenuItem::HideOthers)
+      .add_native_item(MenuItem::ShowAll)
+      .add_native_item(MenuItem::Separator)
+      .add_native_item(MenuItem::Quit),
+  ))
+  .add_submenu(Submenu::new(
+    "Edit",
+    Menu::new()
+      .add_native_item(MenuItem::Cut)
+      .add_native_item(MenuItem::Copy)
+      .add_native_item(MenuItem::Paste)
+      .add_native_item(MenuItem::Separator)
+      .add_native_item(MenuItem::SelectAll)
+      .add_native_item(MenuItem::Undo)
+  ))
+  .add_submenu(Submenu::new(
+    "Window",
+    Menu::new()
+      .add_native_item(MenuItem::EnterFullScreen)
+      .add_native_item(MenuItem::ShowAll)
+  ));
 
-  let submenu = Submenu::new("File", Menu::new().add_item(quit).add_item(close));
-
-  let menu = Menu::new().add_submenu(submenu);
+  
 
   tauri::Builder::default()
     .plugin(TauriSql::default())
     .menu(menu)
-    .on_menu_event(|event| {
-      match event.menu_item_id() {
-        "quit" => {
-          //std::process::exit(0);
-        }
-        "close" => {
-          //event.window().close().unwrap();
-        }
-        _ => {}
-      }
-    })
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }

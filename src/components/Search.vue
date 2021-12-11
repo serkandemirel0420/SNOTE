@@ -1,15 +1,23 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import Database from "tauri-plugin-sql-api";
+
+// $refs.searchTxt.focus();
 
 let db = null;
 let result = ref(null);
 
+// load db
 try {
   (async () => {
     db = await Database.load("/Users/serkandemirel/snote.db");
     let rslt = await db.select(`SELECT * from content;`);
+
+    rslt[0].current = false;
+    //immute
     result.value = rslt;
+
+    // result.value[0].current = true;
   })();
 } catch (e) {
   console.log("Error happened when connecting to DB", e);
@@ -20,29 +28,52 @@ async function searchClick() {
   result.value = rslt;
 }
 
-let indent = ref(5);
-
-function sizeClick($event) {
-  $event.target.style.paddingLeft = indent.value++ + "px";
+function sizeClick(item, e) {
+  return item.parent * 15 + "px";
 }
 
-let contentIcon = "99";
+const paddingSize = computed((item, e) => {
+  return item.parent + 20 + "px";
+});
+
+function navigate() {
+  result.value[0].current = true;
+  return;
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === 83747) {
+    let el = document.querySelector(".items> :first-child").focus();
+    el.target.style.border = "1px solid red";
+  }
+});
 </script>
 
 <template>
   <div id="searchComp">
     {{ msg }}
     <div class="searchBar">
-      <input id="searchTxt" type="text" v-model="search" @keyup.enter="search" />
+      <input
+        id="searchTxt"
+        type="text"
+        ref="searchTxt"
+        v-model="search"
+        @keyup.enter="search"
+      />
       <button id="searchBtn" @click="searchClick">Search</button>
     </div>
 
     <div class="items">
       <div
-        v-for="item in result"
+        tabindex="1"
+        v-for="(item, index) in result"
+        :style="{ paddingLeft: sizeClick(item, $event) }"
         :key="item.id"
-        @click="sizeClick"
+        @click="sizeClick(item, $event)"
         class="item item_style"
+        :class="{ current: item.current }"
+        id="`item_${item.id}`"
+        @keyup.down="navigate"
       >
         {{ item.content }}
       </div>
@@ -51,11 +82,6 @@ let contentIcon = "99";
 </template>
 
 <style scoped>
-.item_style {
-  color: red;
-  content: var(--contentIcon);
-}
-
 #searchComp {
   border: 1px solid #ccc;
   margin: 20px;
@@ -94,5 +120,10 @@ let contentIcon = "99";
 
 .margin-first {
   margin-left: 20 px;
+}
+
+.current {
+  border: 1px solid purple;
+  background-color: aqua;
 }
 </style>
