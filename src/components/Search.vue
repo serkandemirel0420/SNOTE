@@ -27,21 +27,21 @@ try {
 
 async function searchClick() {
   let rslt = await db.select(`SELECT * from content;`);
+
   result.value = rslt;
+  //iff result is not empty
+  if (result.value.length) {
+    result.value[0].current = true;
+  }
 }
 
 function sizeClick(item, e) {
-  return item.parent * 15 + "px";
+  return item.parent * 25 + "px";
 }
 
 const paddingSize = computed((item, e) => {
   return item.parent + 20 + "px";
 });
-
-function navigate() {
-  result.value[0].current = true;
-  return;
-}
 
 let latestIdIndex = 0;
 
@@ -109,9 +109,8 @@ document.addEventListener("keydown", (e) => {
       <div
         tabindex="1"
         v-for="(item, index) in result"
-        :style="{ paddingLeft: sizeClick(item, $event) }"
+        :style="{ marginLeft: sizeClick(item, $event) }"
         :key="item.id"
-        @click="sizeClick(item, $event)"
         class="item item_style"
         :class="{ current: item.current }"
         id="`item_${item.id}`"
