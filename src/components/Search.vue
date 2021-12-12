@@ -5,17 +5,19 @@ import Database from "tauri-plugin-sql-api";
 // $refs.searchTxt.focus();
 
 let db = null;
+let rslt = null;
 let result = ref(null);
 
 // load db
 try {
   (async () => {
     db = await Database.load("/Users/serkandemirel/snote.db");
-    let rslt = await db.select(`SELECT * from content;`);
+    rslt = await db.select(`SELECT * from content;`);
 
     rslt[0].current = false;
     //immute
     result.value = rslt;
+    result.value[0].current = true;
 
     // result.value[0].current = true;
   })();
@@ -41,10 +43,50 @@ function navigate() {
   return;
 }
 
+let latestIdIndex = 0;
+
 document.addEventListener("keydown", (e) => {
-  if (e.key === 83747) {
-    let el = document.querySelector(".items> :first-child").focus();
-    el.target.style.border = "1px solid red";
+  let dataLength = result.value.length;
+
+  //if lastindexid is null then set tp 0 index id
+  if (latestIdIndex === null) {
+    latestIdIndex = 0;
+    return;
+  }
+
+  if (e.code === "ArrowDown") {
+    // let el = document.querySelector(".items> :first-child");
+
+    result.value[latestIdIndex].current = false;
+    latestIdIndex += 1;
+    latestIdIndex = latestIdIndex % dataLength;
+
+    result.value[latestIdIndex].current = true;
+    console.log(latestIdIndex);
+    // el.focus();
+    // el.style.border = "5px solid red";
+  }
+
+  if (e.code === "ArrowUp") {
+    result.value[latestIdIndex].current = false;
+
+    //if latestIdIndex is less then 0 then change assign to the last item of the index
+    if (latestIdIndex < 0) {
+      latestIdIndex = dataLength - 1;
+    }
+    // if latestIdIndex is greater then dataLength then change assign to the first item of the index
+    if (latestIdIndex > dataLength) {
+      latestIdIndex = 0;
+    }
+
+    latestIdIndex -= 1;
+
+    latestIdIndex = (result.value.length + latestIdIndex) % dataLength;
+    result.value[latestIdIndex].current = true;
+    console.log(latestIdIndex);
+
+    // el.focus();
+    // el.style.border = "5px solid red";
   }
 });
 </script>
