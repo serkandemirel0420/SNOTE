@@ -35,7 +35,7 @@ async function searchClick() {
   }
 }
 
-function sizeClick(item, e) {
+function sizeClick(item) {
   return item.parent * 25 + "px";
 }
 
@@ -93,15 +93,8 @@ document.addEventListener("keydown", (e) => {
 
 <template>
   <div id="searchComp">
-    {{ msg }}
     <div class="searchBar">
-      <input
-        id="searchTxt"
-        type="text"
-        ref="searchTxt"
-        v-model="search"
-        @keyup.enter="search"
-      />
+      <input id="searchTxt" type="text" ref="searchTxt" />
       <button id="searchBtn" @click="searchClick">Search</button>
     </div>
 
@@ -109,12 +102,11 @@ document.addEventListener("keydown", (e) => {
       <div
         tabindex="1"
         v-for="(item, index) in result"
-        :style="{ marginLeft: sizeClick(item, $event) }"
+        :style="{ marginLeft: sizeClick(item) }"
         :key="item.id"
         class="item item_style"
         :class="{ current: item.current }"
         id="`item_${item.id}`"
-        @keyup.down="navigate"
       >
         {{ item.content }}
       </div>
