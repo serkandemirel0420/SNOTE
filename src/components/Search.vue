@@ -39,6 +39,12 @@ function sizeClick(item) {
   return item.parent * 25 + "px";
 }
 
+function iconSet(item) {
+  if (item.id == 1 || item.id == 2 || item.id == 3 || item.id == 6) {
+    return true;
+  }
+}
+
 const paddingSize = computed((item, e) => {
   return item.parent + 20 + "px";
 });
@@ -102,10 +108,13 @@ document.addEventListener("keydown", (e) => {
       <div
         tabindex="1"
         v-for="(item, index) in result"
-        :style="{ marginLeft: sizeClick(item) }"
+        :style="{ marginLeft: sizeClick(item), paddingRight: 10 }"
         :key="item.id"
         class="item item_style"
-        :class="{ current: item.current }"
+        :class="{
+          current: item.current,
+          itemNotExpanded: iconSet(item),
+        }"
         id="`item_${item.id}`"
       >
         {{ item.content }}
@@ -158,5 +167,15 @@ document.addEventListener("keydown", (e) => {
 .current {
   border: 1px solid purple;
   background-color: aqua;
+}
+
+.itemExpanded::before {
+  content: url('data:image/svg+xml,<svg width="1em" height="1em" fill="green" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /> </svg></svg>');
+  padding-right: 10px;
+}
+
+.itemNotExpanded::before {
+  content: url('data:image/svg+xml,<svg width="1em" height="1em" fill="green" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /> </svg></svg>');
+  padding-right: 10px;
 }
 </style>

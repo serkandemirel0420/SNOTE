@@ -8,8 +8,8 @@ import "./index.css";
 
 import Database from "tauri-plugin-sql-api";
 
-// let wm = new window.WindowManager("tauri-apps-wm");
-// wm.setFocus();
+let wm = new window.WindowManager("tauri-apps-wm");
+wm.setFocus();
 
 // globalShortcut.register("CommandOrControl+K", () => {
 //   wm.setFocus();
