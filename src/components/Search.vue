@@ -14,6 +14,8 @@ try {
     db = await Database.load("/Users/serkandemirel/snote.db");
     rslt = await db.select(`SELECT * from content;`);
 
+    // rslt = childNodeCount(rslt);
+    // debugger;
     rslt[0].current = false;
     //immute
     result.value = rslt;
@@ -23,6 +25,20 @@ try {
   })();
 } catch (e) {
   console.log("Error happened when connecting to DB", e);
+}
+
+function findAllChildren(id, data) {
+  let results = [];
+  function iterate(id, data) {
+    for (const item of data) {
+      if (item.parent == id) {
+        results.push(item);
+        iterate(item.id, results);
+      }
+    }
+  }
+  iterate(id, data);
+  return results;
 }
 
 async function searchClick() {
@@ -35,14 +51,15 @@ async function searchClick() {
   }
 }
 
-function sizeClick(item) {
-  return item.parent * 25 + "px";
+function sizeClick(item, firstParent) {
+  let parentSize = Math.abs(item.parent + 1);
+
+  return `calc(100% - ${(parentSize - (firstParent + 1)) * 30}px)`;
 }
 
 function iconSet(item) {
-  if (item.id == 1 || item.id == 2 || item.id == 3 || item.id == 6) {
-    return true;
-  }
+  let childLengthCount = findAllChildren(item.id, result.value).length;
+  return childLengthCount;
 }
 
 const paddingSize = computed((item, e) => {
@@ -66,9 +83,8 @@ document.addEventListener("keydown", (e) => {
     result.value[latestIdIndex].current = false;
     latestIdIndex += 1;
     latestIdIndex = latestIdIndex % dataLength;
-
     result.value[latestIdIndex].current = true;
-    console.log(latestIdIndex);
+    // console.log(latestIdIndex);
     // el.focus();
     // el.style.border = "5px solid red";
   }
@@ -106,14 +122,15 @@ document.addEventListener("keydown", (e) => {
 
     <div class="items">
       <div
-        tabindex="1"
+        tabindex="0"
         v-for="(item, index) in result"
-        :style="{ marginLeft: sizeClick(item), paddingRight: 10 }"
+        :style="{ width: sizeClick(item, result[0].parent) }"
         :key="item.id"
         class="item item_style"
         :class="{
           current: item.current,
-          itemNotExpanded: iconSet(item),
+
+          itemExpanded: iconSet(item),
         }"
         id="`item_${item.id}`"
       >
@@ -126,7 +143,8 @@ document.addEventListener("keydown", (e) => {
 <style scoped>
 #searchComp {
   border: 1px solid #ccc;
-  margin: 20px;
+  margin: auto;
+  width: 90%;
 }
 
 .searchBar {
@@ -158,6 +176,21 @@ document.addEventListener("keydown", (e) => {
   padding: 10px 7px;
   border: 1px solid lightgray;
   font-size: large;
+  width: 100%;
+  display: flex;
+  line-height: 1.3;
+  border: 1px solid transparent;
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 100%;
+  align-items: flex-end;
 }
 
 .margin-first {
@@ -165,8 +198,9 @@ document.addEventListener("keydown", (e) => {
 }
 
 .current {
-  border: 1px solid purple;
-  background-color: aqua;
+  line-height: 1.3;
+  border: 1px solid transparent;
+  background-color: rgb(215, 239, 255);
 }
 
 .itemExpanded::before {
