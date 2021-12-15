@@ -56,16 +56,16 @@ resultLocal = [
 result.value = resultLocal;
 
 //add childcount property to each item
-result.value = resultLocal.map((item) => {
+result.value.map((item) => {
   item.childCount = findAllChildren(item.id, result.value).length;
   item.expanded = true;
+  item.show = true;
   return item;
 });
 
 // make the current item active
 result.value[0].current = true;
 
-debugger;
 function findAllChildren(id, data) {
   let results = [];
   function iterate(id, data) {
@@ -96,25 +96,36 @@ function iconSet(item) {
 
 document.addEventListener("keydown", (e) => {
   let dataLength = result.value.length;
-
   if (e.code === "ArrowDown") {
     let index = result.value.findIndex((e) => {
       return e.current == true;
     });
 
     result.value[index].current = false;
-    index = (index + 1) % result.value.length;
+    //increase index as long as the item's show is false
+
+    do {
+      index = ++index % result.value.length;
+    } while (result.value[index].show == false);
+
+    // index = index + 1;
+    // index = index % result.value.length;
     result.value[index].current = true;
+    console.table(result.value);
   }
 
   if (e.code === "ArrowUp") {
     let index = result.value.findIndex((e) => {
       return e.current == true;
     });
+    debugger;
 
     result.value[index].current = false;
-    index = --index < 0 ? result.value.length - 1 : index;
+    do {
+      index = --index < 0 ? result.value.length - 1 : index;
+    } while (result.value[index].show == false);
     result.value[index].current = true;
+    console.table(result.value);
   }
 
   if (e.code === "ArrowLeft") {
@@ -122,12 +133,15 @@ document.addEventListener("keydown", (e) => {
     let index = result.value.findIndex((e) => {
       return e.current == true;
     });
-    debugger;
+
+    result.value[index].expanded = false;
+
     // loop deep all children of the current item and set show property to false
     let children = findAllChildren(result.value[index].id, result.value);
     children.forEach((item) => {
       item.show = false;
     });
+    console.table(result.value);
   }
 
   //Arrowright
@@ -136,12 +150,22 @@ document.addEventListener("keydown", (e) => {
     let index = result.value.findIndex((e) => {
       return e.current == true;
     });
-    debugger;
+
+    //change expand css
+    result.value[index].expanded = true;
+
     // loop deep all children of the current item and set show property to true
     let children = findAllChildren(result.value[index].id, result.value);
     children.forEach((item) => {
       item.show = true;
     });
+
+    children.forEach((item) => {
+      item.expanded = true;
+      item.show = true;
+    });
+
+    console.table(result.value);
   }
 });
 </script>
