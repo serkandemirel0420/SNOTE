@@ -5,6 +5,10 @@ import Database from "tauri-plugin-sql-api";
 // $refs.searchTxt.focus();
 
 let db = null;
+(async function () {
+  db = await Database.load("/Users/serkandemirel/snote.db");
+})();
+
 let resultLocal = [];
 let result = ref(null);
 
@@ -92,6 +96,24 @@ function iconSet(item) {
     return "file";
   }
 }
+
+async function searchClick() {
+  let rslt = await db.select(`SELECT * from content;`);
+  result.value = rslt;
+
+  //TODO refactor this, code repeat
+  //add childcount property to each item
+  result.value.map((item) => {
+    item.childCount = findAllChildren(item.id, result.value).length;
+    item.expanded = true;
+    item.show = true;
+    return item;
+  });
+
+  // make the current item active
+  result.value[0].current = true;
+}
+
 // debugger;
 
 document.addEventListener("keydown", (e) => {
