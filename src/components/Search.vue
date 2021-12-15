@@ -5,35 +5,69 @@ import Database from "tauri-plugin-sql-api";
 // $refs.searchTxt.focus();
 
 let db = null;
-let rslt = null;
+let resultLocal = [];
 let result = ref(null);
 
-// load db
-try {
-  (async () => {
-    db = await Database.load("/Users/serkandemirel/snote.db");
-    rslt = await db.select(`SELECT * from content;`);
+resultLocal = [
+  {
+    id: 1,
+    parent: 0,
+    content: "General",
+    status: 0,
+  },
+  {
+    id: 2,
+    parent: 1,
+    content: "JS Study",
+    status: 1,
+  },
+  {
+    id: 3,
+    parent: 2,
+    content: "Modules",
+    status: 0,
+  },
+  {
+    id: 4,
+    parent: 3,
+    content: "Commonjs",
+    status: 0,
+  },
+  {
+    id: 5,
+    parent: 3,
+    content: "ES module",
+    status: 0,
+  },
+  {
+    id: 6,
+    parent: 1,
+    content: "Job find",
+    status: 0,
+  },
+  {
+    id: 7,
+    content: "Go Home",
+    parent: 1,
+    status: 1,
+  },
+];
 
-    // rslt = childNodeCount(rslt);
-    // debugger;
-    rslt[0].current = false;
-    //immute
-    result.value = rslt;
-    result.value[0].current = true;
+result.value = resultLocal;
 
-    // result.value[0].current = true;
-  })();
-} catch (e) {
-  console.log("Error happened when connecting to DB", e);
-}
+result.value = resultLocal.map((item) => {
+  item.childCount = findAllChildren(item.id, result.value).length;
+  return item;
+});
 
+debugger;
 function findAllChildren(id, data) {
   let results = [];
   function iterate(id, data) {
     for (const item of data) {
       if (item.parent == id) {
         results.push(item);
-        iterate(item.id, results);
+        iterate(item.id, data);
       }
     }
   }
@@ -41,74 +75,21 @@ function findAllChildren(id, data) {
   return results;
 }
 
-async function searchClick() {
-  let rslt = await db.select(`SELECT * from content;`);
-
-  result.value = rslt;
-  //iff result is not empty
-  if (result.value.length) {
-    result.value[0].current = true;
-  }
-}
-
-function sizeClick(item, firstParent) {
+function paddingCalculate(item, firstParent) {
   let parentSize = Math.abs(item.parent + 1);
-
   return `calc(100% - ${(parentSize - (firstParent + 1)) * 30}px)`;
 }
-
-function iconSet(item) {
-  let childLengthCount = findAllChildren(item.id, result.value).length;
-  return childLengthCount;
-}
-
-const paddingSize = computed((item, e) => {
-  return item.parent + 20 + "px";
-});
-
-let latestIdIndex = 0;
 
 document.addEventListener("keydown", (e) => {
   let dataLength = result.value.length;
 
-  //if lastindexid is null then set tp 0 index id
-  if (latestIdIndex === null) {
-    latestIdIndex = 0;
-    return;
-  }
-
   if (e.code === "ArrowDown") {
-    // let el = document.querySelector(".items> :first-child");
-
-    result.value[latestIdIndex].current = false;
-    latestIdIndex += 1;
-    latestIdIndex = latestIdIndex % dataLength;
-    result.value[latestIdIndex].current = true;
-    // console.log(latestIdIndex);
-    // el.focus();
-    // el.style.border = "5px solid red";
   }
 
   if (e.code === "ArrowUp") {
-    result.value[latestIdIndex].current = false;
+  }
 
-    //if latestIdIndex is less then 0 then change assign to the last item of the index
-    if (latestIdIndex < 0) {
-      latestIdIndex = dataLength - 1;
-    }
-    // if latestIdIndex is greater then dataLength then change assign to the first item of the index
-    if (latestIdIndex > dataLength) {
-      latestIdIndex = 0;
-    }
-
-    latestIdIndex -= 1;
-
-    latestIdIndex = (result.value.length + latestIdIndex) % dataLength;
-    result.value[latestIdIndex].current = true;
-    console.log(latestIdIndex);
-
-    // el.focus();
-    // el.style.border = "5px solid red";
+  if (e.code === "ArrowLeft") {
   }
 });
 </script>
@@ -121,21 +102,19 @@ document.addEventListener("keydown", (e) => {
     </div>
 
     <div class="items">
-      <div
-        tabindex="0"
-        v-for="(item, index) in result"
-        :style="{ width: sizeClick(item, result[0].parent) }"
-        :key="item.id"
-        class="item item_style"
-        :class="{
-          current: item.current,
-
-          itemExpanded: iconSet(item),
-        }"
-        id="`item_${item.id}`"
-      >
-        {{ item.content }}
-      </div>
+      <template v-for="(item, index) in result" :key="item.id">
+        <div
+          tabindex="0"
+          :style="{ width: paddingCalculate(item, result[0].parent) }"
+          class="item item_style"
+          :class="{
+            current: item.current,
+          }"
+          id="`item_${item.id}`"
+        >
+          {{ item.content }}
+        </div>
+      </template>
     </div>
   </div>
 </template>
