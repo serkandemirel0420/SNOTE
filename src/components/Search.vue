@@ -55,10 +55,15 @@ resultLocal = [
 
 result.value = resultLocal;
 
+//add childcount property to each item
 result.value = resultLocal.map((item) => {
   item.childCount = findAllChildren(item.id, result.value).length;
+  item.expanded = true;
   return item;
 });
+
+// make the current item active
+result.value[0].current = true;
 
 debugger;
 function findAllChildren(id, data) {
@@ -78,6 +83,14 @@ function findAllChildren(id, data) {
 function paddingCalculate(item, firstParent) {
   let parentSize = Math.abs(item.parent + 1);
   return `calc(100% - ${(parentSize - (firstParent + 1)) * 30}px)`;
+}
+
+function iconSet(item) {
+  if (item.status == 0) {
+    return "folder";
+  } else {
+    return "file";
+  }
 }
 
 document.addEventListener("keydown", (e) => {
@@ -109,6 +122,7 @@ document.addEventListener("keydown", (e) => {
           class="item item_style"
           :class="{
             current: item.current,
+            itemExpanded: item.expanded && item.childCount > 0,
           }"
           id="`item_${item.id}`"
         >
