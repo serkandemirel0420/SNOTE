@@ -92,14 +92,29 @@ function iconSet(item) {
     return "file";
   }
 }
+// debugger;
 
 document.addEventListener("keydown", (e) => {
   let dataLength = result.value.length;
 
   if (e.code === "ArrowDown") {
+    let index = result.value.findIndex((e) => {
+      return e.current == true;
+    });
+
+    result.value[index].current = false;
+    index = (index + 1) % result.value.length;
+    result.value[index].current = true;
   }
 
   if (e.code === "ArrowUp") {
+    let index = result.value.findIndex((e) => {
+      return e.current == true;
+    });
+
+    result.value[index].current = false;
+    index = --index < 0 ? result.value.length - 1 : index;
+    result.value[index].current = true;
   }
 
   if (e.code === "ArrowLeft") {
@@ -123,6 +138,7 @@ document.addEventListener("keydown", (e) => {
           :class="{
             current: item.current,
             itemExpanded: item.expanded && item.childCount > 0,
+            itemNotExpanded: !item.expanded && item.childCount > 0,
           }"
           id="`item_${item.id}`"
         >
