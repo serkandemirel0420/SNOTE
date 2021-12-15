@@ -118,6 +118,30 @@ document.addEventListener("keydown", (e) => {
   }
 
   if (e.code === "ArrowLeft") {
+    // get current item
+    let index = result.value.findIndex((e) => {
+      return e.current == true;
+    });
+    debugger;
+    // loop deep all children of the current item and set show property to false
+    let children = findAllChildren(result.value[index].id, result.value);
+    children.forEach((item) => {
+      item.show = false;
+    });
+  }
+
+  //Arrowright
+  if (e.code === "ArrowRight") {
+    // get current item
+    let index = result.value.findIndex((e) => {
+      return e.current == true;
+    });
+    debugger;
+    // loop deep all children of the current item and set show property to true
+    let children = findAllChildren(result.value[index].id, result.value);
+    children.forEach((item) => {
+      item.show = true;
+    });
   }
 });
 </script>
@@ -135,6 +159,7 @@ document.addEventListener("keydown", (e) => {
           tabindex="0"
           :style="{ width: paddingCalculate(item, result[0].parent) }"
           class="item item_style"
+          v-if="item.show != false"
           :class="{
             current: item.current,
             itemExpanded: item.expanded && item.childCount > 0,
