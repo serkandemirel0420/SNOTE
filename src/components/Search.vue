@@ -183,8 +183,13 @@ document.addEventListener("keydown", (e) => {
     });
 
     children.forEach((item) => {
-      item.expanded = true;
-      item.show = true;
+      if (item.expanded == false) {
+        // item.expanded = true;
+        let subChildren = findAllChildren(item.id, result.value);
+        subChildren.forEach((subItem) => {
+          subItem.show = false;
+        });
+      }
     });
 
     console.table(result.value);
@@ -195,9 +200,11 @@ document.addEventListener("keydown", (e) => {
 <template>
   <div id="searchComp">
     <div class="searchBar">
-      <input id="searchTxt" type="text" ref="searchTxt" />
+      <input id="searchTxt" class="searchTxt" type="text" ref="searchTxt" />
       <button id="searchBtn" @click="searchClick">Search</button>
     </div>
+
+    <input style="width: 100%; height: 20px" type="text" ref="newEntry" />
 
     <div class="items">
       <template v-for="(item, index) in result" :key="item.id">
@@ -232,7 +239,7 @@ document.addEventListener("keydown", (e) => {
   height: 50px;
 }
 
-#searchTxt {
+.searchTxt {
   flex: 10;
   height: 100%;
   border: 1px solid #ccc;
@@ -241,6 +248,7 @@ document.addEventListener("keydown", (e) => {
   font-size: 19px;
   height: 100%;
 }
+
 #searchBtn {
   flex: 1;
   background: #42b983;
