@@ -11,6 +11,8 @@ let db = null;
 
 let resultLocal = [];
 let result = ref(null);
+let itemRefs = ref([]);
+const newEntryText = ref(null);
 
 resultLocal = [
   {
@@ -98,6 +100,7 @@ function iconSet(item) {
 }
 
 async function searchClick() {
+  // debugger;
   let rslt = await db.select(`SELECT * from content;`);
   result.value = rslt;
 
@@ -112,6 +115,12 @@ async function searchClick() {
 
   // make the current item active
   result.value[0].current = true;
+}
+
+function setItemRef(el) {
+  if (el) {
+    itemRefs.value.push(el);
+  }
 }
 
 // debugger;
@@ -140,7 +149,7 @@ document.addEventListener("keydown", (e) => {
     let index = result.value.findIndex((e) => {
       return e.current == true;
     });
-    debugger;
+    // debugger;
 
     result.value[index].current = false;
     do {
@@ -194,6 +203,14 @@ document.addEventListener("keydown", (e) => {
 
     console.table(result.value);
   }
+
+  if (e.code === "Enter") {
+    let currentId = result.value.findIndex((e) => {
+      return e.current == true;
+    });
+    debugger;
+    itemRefs.value[currentId].insertAdjacentElement("afterend", newEntryText.value);
+  }
 });
 </script>
 
@@ -201,14 +218,16 @@ document.addEventListener("keydown", (e) => {
   <div id="searchComp">
     <div class="searchBar">
       <input id="searchTxt" class="searchTxt" type="text" ref="searchTxt" />
-      <button id="searchBtn" @click="searchClick">Search</button>
+      <button id="searchBtn" @click="searchClick" class="searchBtn">Search</button>
     </div>
 
-    <input style="width: 100%; height: 20px" type="text" ref="newEntry" />
+    <input style="" type="text" ref="newEntryText" class="newEntryText" />
 
     <div class="items">
       <template v-for="(item, index) in result" :key="item.id">
         <div
+          :ref="setItemRef"
+          v-on:keyup.enter="enter"
           tabindex="0"
           :style="{ width: paddingCalculate(item, result[0].parent) }"
           class="item item_style"
@@ -248,8 +267,17 @@ document.addEventListener("keydown", (e) => {
   font-size: 19px;
   height: 100%;
 }
+.newEntryText {
+  flex: 10;
+  height: 100%;
+  border: 1px solid #ccc;
 
-#searchBtn {
+  padding: 9px;
+  font-size: 19px;
+  height: 100%;
+}
+
+.searchBtn {
   flex: 1;
   background: #42b983;
   color: #fff;
